@@ -31,12 +31,7 @@ notesRouter.post('/', (req: Request, res: Response) => {
   const id = oldNotes.length + 1 // keine saubere Lösung, aber reicht aus
 
   // 2.2 neue Notiz erstellen
-  const newNote: Note = {
-    title: title,
-    content: content,
-    user: user,
-    id: id
-  }
+  const newNote: Note = new Note(id, title, content, user)
 
   oldNotes.push(newNote)
 
@@ -120,12 +115,7 @@ notesRouter.put('/:id', (req: Request, res: Response) => {
   const filteredNotes = oldNotes.filter(note => note.id !== id)
 
   // 2.2 neue Notiz erstellen
-  const newNote: Note = {
-    title: title,
-    content: content,
-    user: user,
-    id: id
-  }
+  const newNote: Note = new Note(id, title, content, user)
 
   filteredNotes.push(newNote)
 
@@ -146,10 +136,6 @@ notesRouter.patch('/:id', (req: Request, res: Response) => {
   // Wir erwarten, dass wir Informationen zum title, content, user
 
   // const { title, content, user } = req.body
-
-  const title: string | undefined = req.body.title
-  const content: string | undefined = req.body.content
-  const user: string | undefined = req.body.user
   const id = parseInt(req.params.id)
 
   const oldNote = getNoteById(id)
@@ -159,6 +145,10 @@ notesRouter.patch('/:id', (req: Request, res: Response) => {
     return
   }
 
+  const title: string = req.body.title ?? oldNote.title
+  const content: string = req.body.content ?? oldNote.content
+  const user: string = req.body.user ?? oldNote.user
+
   //dieser Code wird nur dann asugefueht, wenn die alte Notiz existiert
   // 2.1 alte Daten abfragen
   const oldNotes = getNotes()
@@ -166,12 +156,7 @@ notesRouter.patch('/:id', (req: Request, res: Response) => {
 
   //2.2 einige Eigenschaften aktualisieren ???
   // 2.2 neue Notiz erstellen
-  const newNote: Note = {
-    title: title ?? oldNote.title,
-    content: content ?? oldNote.content,
-    user: user ?? oldNote.user,
-    id: id
-  }
+  const newNote: Note = new Note(id, title, content, user)
 
   filteredNotes.push(newNote)
 
