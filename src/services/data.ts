@@ -24,3 +24,43 @@ export function writeNotesToFile(oldNotes: Note[]): void {
   const newNotes: NotesRaw = { notes: oldNotes }
   fs.writeFileSync('data/notes.json', JSON.stringify(newNotes))
 }
+
+export function addNote(title: string, content: string, user: string): void {
+  // 2.1 alte Daten abfragen
+  const oldNotes = getNotes()
+  const id = oldNotes.length + 1 // keine saubere Lösung, aber reicht aus
+
+  // 2.2 neue Notiz erstellen
+  const newNote: Note = new Note(id, title, content, user)
+
+  oldNotes.push(newNote)
+
+  // 2.3 neue Notiz in Datei hinzufügen
+
+  writeNotesToFile(oldNotes)
+
+}
+
+export function updateNote(id: number, title: string, content: string, user: string): void {
+  // 2.1 alte Daten abfragen
+  const oldNotes = getNotes()
+  const filteredNotes = oldNotes.filter(note => note.id !== id)
+
+  // 2.2 neue Notiz erstellen
+  const newNote: Note = new Note(id, title, content, user)
+
+  filteredNotes.push(newNote)
+
+  // 2.3 neue Notiz in Datei hinzufügen
+
+  writeNotesToFile(filteredNotes)
+}
+
+export function deleteNoteById(id: number): void {
+  // 2.1 alte Daten abfragen
+  const oldNotes = getNotes()
+  const filteredNotes = oldNotes.filter(note => note.id !== id)
+
+  // 2.2 Das neue Notes Array in der Datei speichern
+  writeNotesToFile(filteredNotes)
+}
