@@ -11,3 +11,11 @@ export class Note {
       this.user = user;
     }
   }
+
+export /**
+* Represents the raw data structure of notes data, containing an array of notes,
+* to extract the notes from the raw JSON object.
+*/
+type NotesRaw = {
+ notes: Note[]
+}
