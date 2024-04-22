@@ -10,6 +10,8 @@ const mockNotes: Note[] = [
     { id: 3, title: "Test Note3", content: "Another Note for TestUser1", user: "TestUser1" }
   ];
 
+const authenticatedUser: string = "TestUser1";
+
 // Mock service functions
 jest.mock('../../src/services/data', () => ({
     getNotes: jest.fn(() => mockNotes),
@@ -22,7 +24,6 @@ jest.mock('../../src/services/data', () => ({
 
 describe("Notes routes, authenticated user", () => {
 
-    const authenticatedUser: string = "TestUser1";
 
     test("GET /notes - retrieve all notes for authenticated user", async () => {  
         
@@ -73,7 +74,7 @@ describe("Notes routes, authenticated user", () => {
     test("PATCH /notes/:id - partially update a note", async () => {
         const partialUpdate = { title: 'Partially Updated Note' };
         const noteToUpdate = mockNotes[1];
-        const noteId = noteToUpdate.id;
+        const noteId = 2;
         const authUser = noteToUpdate.user;
         const oldContent = noteToUpdate.content;
 
