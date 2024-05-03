@@ -2,6 +2,7 @@ import { Request, Response, Router } from 'express'
 import { getNotes, getNoteById, addNote, updateNote, deleteNoteById } from '../services/data'
 import { Note } from '../types/notes'
 import { hasAuthentication } from '../middleware/auth'
+import { RequestBody } from '../types/requestBody'
 
 
 export const notesRouter = Router()
@@ -16,9 +17,7 @@ export const notesRouter = Router()
  */
 notesRouter.post('/', hasAuthentication, (req: Request, res: Response) => {
 
-  const title: string = req.body.title
-  const content: string = req.body.content
-  const user: string = req.body.user
+  const {title, content, user}: RequestBody = req.body
 
   addNote(title, content, user)
 
@@ -74,9 +73,8 @@ notesRouter.get('/:id', hasAuthentication, (req: Request, res: Response) => {
  */
 notesRouter.put('/:id', hasAuthentication, (req: Request, res: Response) => { 
 
-  const title: string = req.body.title
-  const content: string = req.body.content
-  const user: string = req.body.user
+  const {title, content, user}: RequestBody = req.body
+
   const id: number = parseInt(req.params.id)
   const oldNote: Note | undefined = getNoteById(id)
 
