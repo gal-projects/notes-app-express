@@ -17,9 +17,9 @@ export const notesRouter = Router()
  */
 notesRouter.post('/', hasAuthentication, (req: Request, res: Response) => {
 
-  const {title, content, user}: RequestBody = req.body
+  const {title, content, user, categories}: RequestBody = req.body
 
-  addNote(title, content, user)
+  addNote(title, content, user, categories)
 
   res.status(204).send()
 })
@@ -73,7 +73,7 @@ notesRouter.get('/:id', hasAuthentication, (req: Request, res: Response) => {
  */
 notesRouter.put('/:id', hasAuthentication, (req: Request, res: Response) => { 
 
-  const {title, content, user}: RequestBody = req.body
+  const {title, content, user, categories}: RequestBody = req.body
 
   const id: number = parseInt(req.params.id)
   const oldNote: Note | undefined = getNoteById(id)
@@ -83,7 +83,7 @@ notesRouter.put('/:id', hasAuthentication, (req: Request, res: Response) => {
     return
   }
 
-  updateNote(id, title, content, user)
+  updateNote(id, title, content, user, categories)
 
   res.status(204).send()
 })
@@ -110,8 +110,9 @@ notesRouter.patch('/:id', hasAuthentication, (req: Request, res: Response) => {
   const title: string = req.body.title ?? oldNote.title
   const content: string = req.body.content ?? oldNote.content
   const user: string = req.body.user ?? oldNote.user
+  const categories: string[] = req.body.categories ?? oldNote.categories
 
-  updateNote(id, title, content, user)
+  updateNote(id, title, content, user, categories)
 
   res.status(204).send()
  })

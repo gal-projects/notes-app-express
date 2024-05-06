@@ -1,5 +1,6 @@
 export type RequestBody = {
     title: string, 
     content: string, 
-    user: string
+    user: string,
+    categories: string[]
   }
