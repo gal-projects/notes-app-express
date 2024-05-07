@@ -17,11 +17,15 @@ export const notesRouter = Router()
  */
 notesRouter.post('/', hasAuthentication, (req: Request, res: Response) => {
 
+  const authorizedUser = req.headers.authorization!
   const {title, content, user, categories}: RequestBody = req.body
 
-  addNote(title, content, user, categories)
-
-  res.status(204).send()
+  if (authorizedUser !== user) {
+    res.status(403).send('Forbidden')
+  } else {
+    const newNote = addNote(title, content, user, categories)
+    res.status(201).send('Die Notiz wurde erfolgreich erstellt.\n' + JSON.stringify(newNote))
+  }
 })
 
 /**
