@@ -22,10 +22,11 @@ notesRouter.post('/', hasAuthentication, (req: Request, res: Response) => {
 
   if (authorizedUser !== user) {
     res.status(403).send('Forbidden')
-  } else {
-    const newNote = addNote(title, content, user, categories)
-    res.status(201).send('Die Notiz wurde erfolgreich erstellt.\n' + JSON.stringify(newNote))
-  }
+    return
+  } 
+
+  const newNote = addNote(title, content, user, categories)
+  res.status(201).send('Die Notiz wurde erfolgreich erstellt.\n' + JSON.stringify(newNote))
 })
 
 /**
@@ -37,10 +38,9 @@ notesRouter.post('/', hasAuthentication, (req: Request, res: Response) => {
  * @returns {void} - Responds with a HTTP 200 OK status and an array of notes belonging to the user.
  */
 notesRouter.get('/', hasAuthentication, (req: Request, res: Response) => {
-  const user = req.headers.authorization!
-
-  const notes: Note[] = getNotes().filter(note => note.user === user)
-
+  
+  const authorizedUser = req.headers.authorization!
+  const notes: Note[] = getNotes().filter(note => note.user === authorizedUser)
   res.status(200).send(notes)
 })
 
@@ -55,14 +55,19 @@ notesRouter.get('/', hasAuthentication, (req: Request, res: Response) => {
  */
 notesRouter.get('/:id', hasAuthentication, (req: Request, res: Response) => {
 
+  const authorizedUser = req.headers.authorization!
   const id: number = parseInt(req.params.id)
   const note: Note | undefined = getNoteById(id)
 
   if (note === undefined) {
     res.status(404).send(`Die Notiz mit ID ${id} wurde nicht gefunden.`)
-  } else {
-    res.status(200).send(note)
-  }
+    return
+  } else if (note.user !== authorizedUser) {
+    res.status(403).send('Forbidden')
+    return
+  } 
+
+  res.status(200).send(note)
 })
 
 /**
@@ -77,15 +82,18 @@ notesRouter.get('/:id', hasAuthentication, (req: Request, res: Response) => {
  */
 notesRouter.put('/:id', hasAuthentication, (req: Request, res: Response) => { 
 
+  const authorizedUser = req.headers.authorization!
   const {title, content, user, categories}: RequestBody = req.body
-
   const id: number = parseInt(req.params.id)
   const oldNote: Note | undefined = getNoteById(id)
 
   if (oldNote === undefined) {
     res.status(404).send(`Die Notiz mit ID ${id} wurde nicht gefunden.`)
     return
-  }
+  } else if (oldNote.user !== authorizedUser) {
+    res.status(403).send('Forbidden')
+    return
+  } 
 
   updateNote(id, title, content, user, categories)
 
@@ -103,13 +111,17 @@ notesRouter.put('/:id', hasAuthentication, (req: Request, res: Response) => {
  */
 notesRouter.patch('/:id', hasAuthentication, (req: Request, res: Response) => {
 
+  const authorizedUser = req.headers.authorization!
   const id: number = parseInt(req.params.id)
   const oldNote: Note | undefined = getNoteById(id)
 
   if (oldNote === undefined) {
     res.status(404).send(`Die Notiz mit ID ${id} wurde nicht gefunden.`)
     return
-  }
+  } else if (oldNote.user !== authorizedUser) {
+    res.status(403).send('Forbidden')
+    return
+  } 
 
   const title: string = req.body.title ?? oldNote.title
   const content: string = req.body.content ?? oldNote.content
@@ -131,13 +143,17 @@ notesRouter.patch('/:id', hasAuthentication, (req: Request, res: Response) => {
  */
 notesRouter.delete('/:id', hasAuthentication, (req: Request, res: Response) => { 
 
+  const authorizedUser = req.headers.authorization!
   const id: number = parseInt(req.params.id)
   const oldNote: Note | undefined = getNoteById(id)
 
   if (oldNote === undefined) {
     res.status(404).send(`Die Notiz mit ID ${id} wurde nicht gefunden.`)
     return
-  }
+  } else if (oldNote.user !== authorizedUser) {
+    res.status(403).send('Forbidden')
+    return
+  } 
 
   deleteNoteById(id)
 
